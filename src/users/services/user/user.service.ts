@@ -4,10 +4,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import {Model} from "mongoose";
 import { UserInfo,  } from 'src/entities/userInfo.entity';
 import * as bcrypt from 'bcrypt';
+import { AuthService } from 'src/auth/auth/auth.service';
 
 @Injectable()
 export class UserService {
-    constructor (@InjectModel(UserInfo.name) private userInfoModel : Model<UserInfo> ){
+    constructor (@InjectModel(UserInfo.name) private userInfoModel : Model<UserInfo> , private authservervice: AuthService){
 
     }
     getAllUserInfo(): Promise<any>{
@@ -34,7 +35,8 @@ export class UserService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return ` ${user.username}`;
+    return this.authservervice.login(user);
+    // return ` ${user.username}`;
 
     }
 }

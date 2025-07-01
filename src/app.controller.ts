@@ -11,15 +11,15 @@ export class AppController {
     return this.appService.getHello();
   }
 
-   @Post('user/register')
-   userDetails(@Body() body : CreateUserDto){
-    console.log(body);
+  //  @Post('user/register')
+  //  userDetails(@Body() body : CreateUserDto){
+  //   console.log(body);
 
-    return{
-      message : "you have register a user successfully",
-      user: body
-    }
+  //   return{
+  //     message : "you have register a user successfully",
+  //     user: body
+  //   }
 
-  }
+  // }
 
 }

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Body, Post, HttpCode } from '@nestjs/common';
+import { Controller, Get, Body, Post, HttpCode, UseGuards, Req, SetMetadata } from '@nestjs/common';
 import { LoginDto } from 'src/dto/login-dto';
 import { CreateUserDto } from 'src/dto/user-dto';
 import { UserService } from './services/user/user.service';
+import { JwtAuthGuard } from 'src/auth/auth/jwt-auth-guard';
+import { RolesGuard } from 'src/auth/roleGuards';
 
 @Controller('users')
 export class UsersController {
@@ -19,36 +21,29 @@ export class UsersController {
 
   @Post('/register')
   async userDetails(@Body() body : CreateUserDto){
-    // console.log(body);
-
-    // return{
-    //   message : "you have register a user successfully"
-    // }
-
     const user = await this.userService.createUser(body);
-    
    return user
 
   }
 
   @Post('/login')
-  
   async authenticateUser(@Body() body : LoginDto){
-    console.log(body)
-
-
     const user = await this.userService.getUser(body);
-  
-
-   return user;
+   if(user){
+    return user
+   }
+   else{
+    return {
+      message: "user Not found"
+    }
+   }
 
   }
 
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+   @SetMetadata('roles', ['admin'])
   @Get('/all')
-  @HttpCode(200)
-  async getAllUsers(){
-
+  async getAllUsers(@Req() req){
    const res= await this.userService.getAllUserInfo();
    return res;
 
